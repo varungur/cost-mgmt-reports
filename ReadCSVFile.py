@@ -1,6 +1,9 @@
 import pandas as pd
-import sys, getopt, os, tarfile, fnmatch, csv, openpyxl
+import sys, getopt, os, tarfile, fnmatch, csv, time
 from natsort import natsorted, ns
+
+# To calculate script execution time
+start_time = time.time()
 
 #Print version numbers of Python, Pandas and CSV modules installed on the host machine
 print('Python Version installed '+ sys.version)
@@ -17,31 +20,31 @@ entries = natsorted(os.listdir(inputDirName), key=lambda y: y.lower())
 # Create an empty Data Frame to store the final data after iterating through the directories
 finalDataFrame = pd.DataFrame()
 
-""""
-# Step 1 - Logic to extract all the reports generated for a particular month
+#""""
+# Step 2 - Logic to extract all the reports generated for a particular month
 # Iterate through the list of directories
 for entry in entries:
+
     # Store the absolute path of the file
-    fileName = inputDirName +'/'+ entry
+    fileName = inputDirName + entry
 
     # Check if it is a file and NOT a directory
     isFile = os.path.isfile(fileName)
+
     if isFile:
+
         # Check if it is a TAR file
         if tarfile.is_tarfile(fileName):
-            print(fileName)
-
-            #isDirExist = os.path.exists(fileName)
-            #if not isDirExist:
-            #    os.makedirs(fileName)
+            #print(fileName)
 
             #Extract the contents of the TAR file
             file = tarfile.open(fileName)
             file.extractall(fileName[:-7])
             file.close()
-"""
+#"""
 
-# Step 2 - Logic to look at the reports generated every 6 hours
+#"""
+# Step 3 - Logic to look at the reports generated every 6 hours
 # Iterate through the list of directories
 for entry in entries:
     
@@ -86,9 +89,13 @@ for entry in entries:
                     # Concat the data to the empty DataFrame created at the beginning, since we are iterating through the list of files, 
                     finalDataFrame = pd.concat([finalDataFrame, subsetData], axis = 0)
 
+# Step 4 - Group the data to put into a XLSX document
 # Group the information for each 1 hour interval to highlight the vCPU cores used by the nodes in the OpenShift cluster
 vCpuUsed = finalDataFrame.groupby(['interval_start', 'interval_end', 'node'])['node_capacity_cpu_cores'].max()
 #print(vCpuUsed)
 
 # Dump the information into a XLSX document
 vCpuUsed.to_excel('vcpu_count.xlsx')
+
+print("--- Script execution time: %s seconds ---" % round(time.time() - start_time))
+#"""
