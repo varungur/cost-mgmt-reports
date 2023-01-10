@@ -10,7 +10,7 @@ ReadCSVFile.py module does the following:
 # Pre-requisites
 
 - OpenShift cluster version 4.9 or higher
-- Red Hat Cost Management Metrics operator deployed via OpenShift Web Console or OpenShift CLI
+- Red Hat Cost Management Metrics operator v1.1.9 deployed via OpenShift Web Console or OpenShift CLI
 - Reports generated for a period of time, for a month, by the operator are downloaded and stored in a directory accessible by the Python module
 
 Please install the following Python packages on the machine which will be used to run this Python module: \
@@ -20,6 +20,25 @@ Pandas (Version: 1.5.2) \
 Natsorted (Version: ) \
 CSV (Version: )
 ```
+
+# Install the Red Hat Cost Management Metrics Operator
+
+
+# Things to note:
+- The Operator v1.1.9 generates a report once every 6 hours
+- The Operator generates 4 files
+- Generated file names have the following pattern:\
+```
+*_openshift_usage_report.0.csv\
+*_openshift_usage_report.1.csv\
+*_openshift_usage_report.2.csv\
+*_openshift_usage_report.3.csv\
+```
+
+- _report_0.csv has namespace related information
+- _report_1.csv has node related information
+- _report_2.csv has pod related information including node capacity
+- _report_3.csv has persistent volume related information
 
 # Command to run the Python module
 Please use the following command to execute the Python module
@@ -35,7 +54,7 @@ $ python ReadCSVFile.py /users/operator-reports/upload/
 
 The following issues are open with the Red Hat BU:
 ```
-[a link](https://issues.redhat.com/projects/COST/issues/COST-3309)
+https://issues.redhat.com/projects/COST/issues/COST-3309
 ```
 
 The following issues need to be addressed with the Python module:
